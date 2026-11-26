@@ -1,0 +1,23 @@
+{
+  "name": "@tengu/intercept",
+  "version": "0.1.0",
+  "description": "Three-layer intercept rules, static shell/python analysis, LLM judge, and human-in-the-loop approval engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/package-files.mjs clean dist",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@tengu/store": "0.1.0",
+    "@earendil-works/pi-ai": "1.5.2"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@tengu/store",
+  "version": "0.1.0",
+  "description": "Pluggable storage layer (SQLite default) for Tengu dual graphs, tasks, findings, intercept, traffic, and evidence",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/package-files.mjs clean dist",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@tengu/ops",
+  "version": "0.1.0",
+  "description": "Pentest operations engines: HTTP/Auth/Diff/Contract/Probe/JS-Audit, Traffic Proxy, OOB Listener, Jobs, VulnIntel, ScopeSentry Sync, Notifications, Reports",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/package-files.mjs clean dist",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@tengu/store": "0.1.0"
+  }
+}

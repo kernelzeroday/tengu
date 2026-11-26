@@ -1,0 +1,33 @@
+{
+  "name": "tengu-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tengu — AI Autonomous Penetration Testing Platform rebuilt on a Pi core",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "npm run clean --workspaces --if-present",
+    "build:pi": "cd packages/telemetry && npm run build && cd ../schema && npm run build && cd ../chord && npm run build && cd ../tui && npm run build && cd ../codemode && npm run build && cd ../mcp && npm run build && cd ../ai && npm run build:offline && cd ../durable && npm run build && cd ../env && npm run build && cd ../agent && npm run build && cd ../coding-agent && npm run build",
+    "build:tengu": "npm run build --workspace=@tengu/store && npm run build --workspace=@tengu/intercept && npm run build --workspace=@tengu/ops && npm run build --workspace=@tengu/engine && npm run build --workspace=@tengu/cli",
+    "build": "npm run build:pi && npm run build:tengu",
+    "test:tengu": "node --test packages/tengu-store/test/*.test.ts packages/tengu-intercept/test/*.test.ts packages/tengu-ops/test/*.test.ts packages/tengu-engine/test/*.test.ts packages/tengu-cli/test/*.test.ts",
+    "tengu": "node packages/tengu-cli/dist/cli.js",
+    "test:unit": "node --test packages/tengu-store/test/store.test.ts packages/tengu-intercept/test/intercept.test.ts packages/tengu-ops/test/ops.test.ts packages/tengu-engine/test/engine.test.ts packages/tengu-cli/test/cli.test.ts packages/tengu-cli/test/console.test.ts",
+    "test:negative": "node --test packages/tengu-*/test/*.negative.test.ts",
+    "test:property": "node --test packages/tengu-*/test/*.property.test.ts",
+    "test:smoke": "node --test packages/tengu-cli/test/smoke.*.test.ts",
+    "test:seance": "cargo test --manifest-path ${SEANCE_DIR:-../seance}/Cargo.toml",
+    "test:all": "rm -f packages/tengu-*/tsconfig.build.tsbuildinfo && npm run build:tengu && chmod +x packages/tengu-cli/dist/cli.js && npm run test:unit && npm run test:negative && npm run test:property && npm run test:smoke && npm run test:seance"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2",
+    "yaml": "2.9.0"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

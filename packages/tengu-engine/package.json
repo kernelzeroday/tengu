@@ -1,0 +1,29 @@
+{
+  "name": "@tengu/engine",
+  "version": "0.1.0",
+  "description": "Tengu multi-agent Planner/Worker/MainAgent/Retester autonomous pentest engine and 50-tool suite on Pi core",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/package-files.mjs clean dist",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@tengu/store": "0.1.0",
+    "@tengu/intercept": "0.1.0",
+    "@tengu/ops": "0.1.0",
+    "@earendil-works/pi-ai": "1.5.2",
+    "@earendil-works/pi-agent-core": "1.5.2",
+    "@earendil-works/pi-mcp": "1.5.2",
+    "@earendil-works/pi-schema": "1.5.2",
+    "typebox": "*"
+  }
+}
