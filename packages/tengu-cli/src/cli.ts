@@ -141,8 +141,9 @@ async function main(): Promise<void> {
 			const scopeRaw = typeof flags.scope === "string" ? flags.scope : targetRaw;
 			const taskName = typeof flags.name === "string" ? flags.name : (targetRaw ? `Headless Pentest (${targetRaw})` : printPrompt.slice(0, 60));
 			const maxWorkers = typeof flags["max-workers"] === "string" ? Number(flags["max-workers"]) : 3;
-			const maxRounds = typeof flags.rounds === "string" ? Number(flags.rounds) : 5;
-			const task = store.createTask({ name: taskName, description: printPrompt, maxWorkers });
+			const maxTurns = typeof flags["max-turns"] === "string" ? Number(flags["max-turns"]) : 18;
+			const maxRounds = typeof flags.rounds === "string" ? Number(flags.rounds) : 3;
+			const task = store.createTask({ name: taskName, description: printPrompt, maxWorkers, maxTurns });
 
 			// Seed strict scope rules from --scope / --target
 			for (const item of scopeRaw.split(",").map((x) => x.trim()).filter(Boolean)) {

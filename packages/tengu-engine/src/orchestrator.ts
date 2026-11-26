@@ -270,6 +270,10 @@ export class TenguOrchestrator {
 		apiKey?: string;
 	}): Agent {
 		let turn = 0;
+		let steeredWrapUp = false;
+		const taskRec = this.store.getTask(input.taskId);
+		const maxToolCalls = Math.max(4, taskRec?.maxTurns ?? 16);
+		const REPORTING_TOOLS = new Set(["report_finding", "record_fact", "save_evidence", "insert_assets"]);
 		const agent = new Agent({
 			streamFn: this.streamFn,
 			transformContext: async (msgs) => compactAgentMessages(msgs),
@@ -284,6 +288,16 @@ export class TenguOrchestrator {
 				const shouldContinue = await this.waitIfPaused(input.taskId);
 				if (!shouldContinue) {
 					return { block: true, reason: "Task stopped by operator", terminate: true };
+				}
+				if (turn >= maxToolCalls && !REPORTING_TOOLS.has(ctx.toolCall.name)) {
+					return {
+						block: true,
+						reason: `Worker turn budget (${maxToolCalls}) reached. Immediately call report_finding/record_fact for any verified vulnerabilities or conclude your summary now.`,
+						terminate: turn >= maxToolCalls + 3,
+					};
+				}
+				if (turn >= maxToolCalls + 4) {
+					return { block: true, reason: "Hard turn limit reached; concluding worker.", terminate: true };
 				}
 				const decision = await this.intercept.evaluate({
 					taskId: input.taskId,
@@ -324,6 +338,19 @@ export class TenguOrchestrator {
 						toolOutput: maskSecrets(outText),
 						isError: ctx.isError,
 						durationMs: 0,
+					});
+				}
+				if (!steeredWrapUp && input.intentId != null && turn >= Math.max(2, maxToolCalls - 3)) {
+					steeredWrapUp = true;
+					agent.steer({
+						role: "user",
+						content: [
+							{
+								type: "text",
+								text: `Turn budget notice: ${Math.max(1, maxToolCalls - turn)} exploration tool calls remaining. Immediately call report_finding for every verified vulnerability and record_fact for key discoveries, then conclude.`,
+							},
+						],
+						timestamp: Date.now(),
 					});
 				}
 				return undefined;

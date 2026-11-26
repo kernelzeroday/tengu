@@ -1,0 +1,42 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#
+# Tengu Live E2E Lab VM (libvirt/KVM)
+# Spins up a clean isolated Linux VM running OWASP Juice Shop (public training target)
+# on port 3000 for automated end-to-end pentest benchmarking, then destroys cleanly.
+
+Vagrant.configure("2") do |config|
+  config.vm.box = ENV.fetch("TENGU_LAB_BOX", "generic/alpine319")
+  config.vm.hostname = "tengu-lab-target"
+
+  config.vm.provider :libvirt do |lv|
+    lv.memory = Integer(ENV.fetch("TENGU_LAB_MEMORY", "1536"))
+    lv.cpus = Integer(ENV.fetch("TENGU_LAB_CPUS", "2"))
+    lv.driver = "kvm"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    set -eu
+    if command -v apk >/dev/null 2>&1; then
+      apk update
+      apk add --no-cache podman curl
+    elif command -v apt-get >/dev/null 2>&1; then
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update -qq
+      apt-get install -y -qq podman curl
+    elif command -v dnf >/dev/null 2>&1; then
+      dnf install -y -q podman curl
+    fi
+    podman rm -f tengu-juice-shop >/dev/null 2>&1 || true
+    podman run -d --name tengu-juice-shop -p 3000:3000 docker.io/bkimminich/juice-shop:latest
+    for i in $(seq 1 60); do
+      if curl -sf http://127.0.0.1:3000/rest/admin/application-version >/dev/null 2>&1; then
+        echo "Target ready on :3000"
+        exit 0
+      fi
+      sleep 2
+    done
+    echo "Target failed to become ready in time" >&2
+    exit 1
+  SHELL
+end
