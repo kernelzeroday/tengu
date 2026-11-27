@@ -31,3 +31,18 @@ node packages/tengu-cli/dist/cli.js --help
 node packages/tengu-cli/dist/cli.js task create "Q4 API Pentest"
 node packages/tengu-cli/dist/cli.js rpc
 ```
+
+## Running the worker env in Kali (podman)
+
+`--env host` (default) runs tengu on the host. `--env kali` runs it inside a throwaway
+Kali Linux container (`docker.io/kalilinux/kali-rolling`) with the pentest toolset
+and Node installed at container start — no separate VM or OS install required. The
+repo, `~/.pi` provider config, and an isolated TENGU_HOME are bind-mounted, and
+provider hostnames from `~/.pi/agent/models.json` are mapped in via `--add-host`.
+
+```bash
+# Full live benchmark also exercises the kali worker env
+npm run test:e2e:lab:kali
+```
+
+The Kali installer ISO is kept in `~/Downloads/iso/` as the fallback for VM-based runs.

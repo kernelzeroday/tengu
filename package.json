@@ -21,6 +21,7 @@
     "test:seance": "cargo test --manifest-path ${SEANCE_DIR:-../seance}/Cargo.toml",
     "test:all": "rm -f packages/tengu-*/tsconfig.build.tsbuildinfo && npm run build:tengu && chmod +x packages/tengu-cli/dist/cli.js && npm run test:unit && npm run test:negative && npm run test:property && npm run test:smoke && npm run test:seance",
     "test:e2e:lab": "node e2e/lab/run-live-e2e.ts --mode podman --rounds 2 --max-workers 2",
+    "test:e2e:lab:kali": "node e2e/lab/run-live-e2e.ts --mode podman --env kali --rounds 2 --max-workers 2",
     "test:e2e:vagrant": "node e2e/lab/run-live-e2e.ts --mode vagrant --rounds 3 --max-workers 2"
   },
   "devDependencies": {
